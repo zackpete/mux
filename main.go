@@ -241,15 +241,10 @@ func (this *Command) write(kind Type, line string) {
 
 	var divider string
 
-	switch kind {
-	case Aux:
-		divider = "? "
-	case Out:
-		divider = "| "
-	case Err:
+	if kind == Aux {
 		divider = "! "
-	default:
-		panic("unreachable")
+	} else {
+		divider = "| "
 	}
 
 	var name string

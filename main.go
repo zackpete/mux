@@ -38,6 +38,8 @@ type (
 		Type  Type
 		Value string
 	}
+
+	BlockingReader struct{}
 )
 
 const name = "mux"
@@ -175,6 +177,7 @@ func (this *Command) run() chan Line {
 
 	cmd.Stdout = outW
 	cmd.Stderr = errW
+	cmd.Stdin = BlockingReader{}
 
 	if err := cmd.Start(); err != nil {
 		go func() {
@@ -291,4 +294,8 @@ EXAMPLES
 	%[1]s { name=good ping -c1 example.com } { name=bad ping -c1 example.invalid }
 	%[1]s { exit=42 false } { sleep 1 } 
 `, name)
+}
+
+func (_ BlockingReader) Read(_ []byte) (int, error) {
+	select {}
 }

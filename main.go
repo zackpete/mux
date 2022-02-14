@@ -55,7 +55,10 @@ const (
 	Err
 )
 
-var Param = regexp.MustCompile(`^(\w+)=(.+)$`)
+var (
+	Param  = regexp.MustCompile(`^(\w+)=(.+)$`)
+	Escape = regexp.MustCompile(`\x1b\[[0-9;]*m`)
+)
 
 func main() {
 	if len(os.Args) < 2 {
@@ -229,6 +232,8 @@ func (this *Command) pipe(src *io.PipeReader, kind Type, wg *sync.WaitGroup) {
 }
 
 func (this *Command) write(kind Type, line string) {
+	line = Escape.ReplaceAllString(line, "")
+
 	l := Line{Type: kind}
 
 	var divider string
